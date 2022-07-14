@@ -1,15 +1,19 @@
 FROM alpine
 
-ENV USERNAME="" PASSWORD=""
+ENV USERNAME="" PASSWORD="" TZ=""
 
 COPY nginx.conf /opt/nginx/conf/nginx.conf
 
 COPY entrypoint.sh /
 
-RUN apk update && \
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.bfsu.edu.cn/g' /etc/apk/repositories && \
+    apk update && \
+    apk add --no-cache tzdata && \
     apk add --no-cache pcre libxml2 libxslt && \
     apk add --no-cache apache2-utils && \
     apk add --no-cache gcc make libc-dev pcre-dev zlib-dev libxml2-dev libxslt-dev && \
+    cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    echo $TZ > /etc/timezone && \
     cd /tmp && \
     wget https://github.com/nginx/nginx/archive/master.zip -O nginx.zip && \
     unzip nginx.zip && \
@@ -20,7 +24,7 @@ RUN apk update && \
     make && make install && \
     cd /root && \
     chmod +x /entrypoint.sh && \
-    apk del gcc make libc-dev pcre-dev zlib-dev libxml2-dev libxslt-dev && \
+    apk del tzdata gcc make libc-dev pcre-dev zlib-dev libxml2-dev libxslt-dev && \
     rm -rf /var/cache/apk/* && \
     rm -rf /tmp/*
 
