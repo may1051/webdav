@@ -18,17 +18,17 @@ https://github.com/arut/nginx-dav-ext-module
 
 ## Github
 
-https://github.com/duxlong/webdav
+https://github.com/may1051/webdav
 
 ## Docker hub
 
-https://hub.docker.com/r/duxlong/webdav
+https://hub.docker.com/may1051/webdav
 
 ## Usage
 
 docker pull
 ```
-docker pull duxlong/webdav
+docker pull may1051/webdav
 ```
 
 docker run 根据自己情况修改-单用户
@@ -40,10 +40,11 @@ docker run -d \
     -v /srv/dev-disk-by-label-3T/zoo:/data/zoo \
     -e USERNAME=xxx \
     -e PASSWORD=xxx \
-    -p 8001:80 \
+    -e TZ=Asia/Shanghai \
+    -p 80:80 \
     --restart=unless-stopped \
     --name=webdav \
-    duxlong/webdav
+    may1051/webdav
 ```
 
 docker run 根据自己情况修改-多用户
@@ -54,10 +55,10 @@ docker run -d \
     -v /srv/dev-disk-by-label-3T/video:/data/video \
     -v /srv/dev-disk-by-label-3T/zoo:/data/zoo \
     -v /docker/webdav/htpasswd:/opt/nginx/conf/htpasswd:ro \
-    -p 8001:80 \
+    -p 80:80 \
     --restart=unless-stopped \
     --name=webdav \
-    duxlong/webdav
+    may1051/webdav
 ```
 
 - 支持多用户；运行容器前，需要在线网站生成并配置好 `htpasswd` 文件（默认 Md5 算法加密）
@@ -72,7 +73,7 @@ version: "2"
 services:
   webdav:
     container_name: webdav
-    image: duxlong/webdav
+    image: may1051/webdav
     network_mode: bridge
     restart: unless-stopped
     volumes:
@@ -84,5 +85,9 @@ services:
       # 挂载用户名和密码
       - /docker/webdav/htpasswd:/opt/nginx/conf/htpasswd:ro
     ports:
-      - 8001:80
+      - 80:80
+    environment:
+      - USERNAME=admin
+      - PASSWORD=may
+      - TZ=Asia/Shanghai
 ```
